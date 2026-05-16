@@ -1,13 +1,11 @@
 package tobedone.task.domain;
 
-import java.time.Instant;
-import java.util.UUID;
-
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import tobedone.task.domain.exception.InvalidTaskStateException;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Getter

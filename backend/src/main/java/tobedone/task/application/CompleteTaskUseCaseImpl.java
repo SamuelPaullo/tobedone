@@ -10,8 +10,6 @@ import tobedone.task.domain.exception.TaskNotFoundException;
 
 import java.util.UUID;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @RequiredArgsConstructor
 class CompleteTaskUseCaseImpl implements CompleteTaskUseCase {
 
