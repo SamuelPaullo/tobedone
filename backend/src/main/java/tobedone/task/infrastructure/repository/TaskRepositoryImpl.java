@@ -8,16 +8,16 @@ import org.springframework.stereotype.Repository;
 
 import tobedone.task.domain.Task;
 import tobedone.task.application.port.output.TaskRepository;
-import tobedone.task.infrastructure.repository.jpa.TaskPersistenceMapper;
+import tobedone.task.infrastructure.repository.jpa.TaskJpaMapper;
 import tobedone.task.infrastructure.repository.jpa.SpringDataTaskJpaRepository;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
 
 	private final SpringDataTaskJpaRepository jpaRepository;
-	private final TaskPersistenceMapper mapper;
+	private final TaskJpaMapper mapper;
 
-	public TaskRepositoryImpl(SpringDataTaskJpaRepository jpaRepository, TaskPersistenceMapper mapper) {
+	public TaskRepositoryImpl(SpringDataTaskJpaRepository jpaRepository, TaskJpaMapper mapper) {
 		this.jpaRepository = jpaRepository;
 		this.mapper = mapper;
 	}

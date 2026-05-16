@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import tobedone.task.domain.Task;
 
 @Component
-public class TaskPersistenceMapper {
+public class TaskJpaMapper {
 
 	public TaskEntity toEntity(Task task) {
 		return new TaskEntity(task.getId(), task.getTitle(), task.getStatus(), task.getCreatedAt(), task.getCompletedAt());
