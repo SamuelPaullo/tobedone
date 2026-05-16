@@ -1,7 +1,15 @@
 package tobedone.task.domain;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum TaskStatus {
-	OPEN,
-	COMPLETED
+
+	OPEN("OPEN"),
+	COMPLETED("COMPLETED");
+
+	private final String description;
 }
 

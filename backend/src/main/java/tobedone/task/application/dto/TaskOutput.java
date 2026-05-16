@@ -8,7 +8,7 @@ import tobedone.task.domain.TaskStatus;
 public record TaskOutput(
 	UUID id,
 	String title,
-	TaskStatus status,
+	String status,
 	Instant createdAt,
 	Instant completedAt
 ) {
