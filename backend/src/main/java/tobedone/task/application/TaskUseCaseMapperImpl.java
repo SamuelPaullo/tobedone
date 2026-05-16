@@ -7,7 +7,6 @@ import tobedone.task.application.dto.CreateTaskOutput;
 import tobedone.task.application.dto.TaskOutput;
 import tobedone.task.domain.Task;
 
-@Component
 class TaskUseCaseMapper {
 
     CompleteTaskOutput toCompleteTaskOutput(Task task) {
