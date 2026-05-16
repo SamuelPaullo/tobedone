@@ -1,16 +1,15 @@
 package tobedone.task.application;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import tobedone.task.application.dto.CompleteTaskOutput;
 import tobedone.task.application.port.input.CompleteTaskUseCase;
+import tobedone.task.application.port.input.TaskUseCaseMapper;
 import tobedone.task.application.port.output.TaskRepository;
 import tobedone.task.domain.Task;
 import tobedone.task.domain.exception.TaskNotFoundException;
 
 import java.util.UUID;
 
-@Service
 @RequiredArgsConstructor
 class CompleteTaskUseCaseImpl implements CompleteTaskUseCase {
 

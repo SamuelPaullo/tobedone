@@ -1,4 +1,4 @@
-package tobedone.task.infrastructure.persistence.jpa;
+package tobedone.task.infrastructure.repository.jpa;
 
 import org.springframework.stereotype.Component;
 

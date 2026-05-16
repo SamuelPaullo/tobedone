@@ -1,4 +1,4 @@
-package tobedone.task.infrastructure.persistence;
+package tobedone.task.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import tobedone.task.domain.Task;
 import tobedone.task.application.port.output.TaskRepository;
-import tobedone.task.infrastructure.persistence.jpa.TaskPersistenceMapper;
-import tobedone.task.infrastructure.persistence.jpa.SpringDataTaskJpaRepository;
+import tobedone.task.infrastructure.repository.jpa.TaskPersistenceMapper;
+import tobedone.task.infrastructure.repository.jpa.SpringDataTaskJpaRepository;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {

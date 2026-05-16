@@ -1,4 +1,4 @@
-package tobedone.task.infrastructure.persistence.jpa;
+package tobedone.task.infrastructure.repository.jpa;
 
 import java.util.UUID;
 

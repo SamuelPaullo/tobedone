@@ -2,15 +2,13 @@ package tobedone.task.application;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-
+import lombok.RequiredArgsConstructor;
 import tobedone.task.application.dto.TaskOutput;
 import tobedone.task.application.port.input.ListTasksUseCase;
+import tobedone.task.application.port.input.TaskUseCaseMapper;
 import tobedone.task.application.port.output.TaskRepository;
 
-@Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 class ListTasksUseCaseImpl implements ListTasksUseCase {
 
 	private final TaskRepository taskRepository;
