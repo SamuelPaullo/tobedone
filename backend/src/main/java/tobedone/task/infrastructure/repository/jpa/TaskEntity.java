@@ -1,5 +1,6 @@
 package tobedone.task.infrastructure.repository.jpa;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -8,53 +9,28 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import tobedone.task.domain.TaskStatus;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 @Table(name = "tasks")
-public class TaskEntity {
+public class TaskEntity implements Serializable {
 
-	@Id
-	private UUID id;
+    @Id
+    private UUID id;
 
-	private String title;
+    private String title;
 
-	@Enumerated(EnumType.STRING)
-	private TaskStatus status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
-	private Instant createdAt;
+    private Instant createdAt;
 
-	private Instant completedAt;
-
-	protected TaskEntity() {
-	}
-
-	public TaskEntity(UUID id, String title, TaskStatus status, Instant createdAt, Instant completedAt) {
-		this.id = id;
-		this.title = title;
-		this.status = status;
-		this.createdAt = createdAt;
-		this.completedAt = completedAt;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public TaskStatus getStatus() {
-		return status;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public Instant getCompletedAt() {
-		return completedAt;
-	}
+    private Instant completedAt;
 }
 

@@ -1,10 +1,10 @@
 package tobedone.task.application;
 
-import tobedone.task.application.port.input.CompleteTaskUseCase;
-import tobedone.task.application.port.input.CreateTaskUseCase;
-import tobedone.task.application.port.input.ListTasksUseCase;
-import tobedone.task.application.port.input.TaskUseCaseMapper;
-import tobedone.task.application.port.output.TaskRepository;
+import tobedone.task.application.port.incoming.CompleteTaskUseCase;
+import tobedone.task.application.port.incoming.CreateTaskUseCase;
+import tobedone.task.application.port.incoming.ListTasksUseCase;
+import tobedone.task.application.port.incoming.TaskUseCaseMapper;
+import tobedone.task.application.port.outgoing.TaskRepository;
 
 public final class TaskUseCasesFactory {
 

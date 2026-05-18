@@ -1,4 +1,4 @@
-package tobedone.task;
+package tobedone.task.api;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -19,17 +19,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import tobedone.task.api.TaskApiMapper;
-import tobedone.task.api.TaskController;
-import tobedone.task.api.TaskExceptionHandler;
 import tobedone.task.application.dto.CompleteTaskOutput;
+import tobedone.task.application.dto.CompleteTaskInput;
+import tobedone.task.application.dto.CreateTaskInput;
 import tobedone.task.application.dto.CreateTaskOutput;
 import tobedone.task.application.dto.TaskOutput;
-import tobedone.task.application.port.input.CompleteTaskUseCase;
-import tobedone.task.application.port.input.CreateTaskUseCase;
-import tobedone.task.application.port.input.ListTasksUseCase;
-import tobedone.task.domain.exception.InvalidTaskStateException;
-import tobedone.task.domain.exception.TaskNotFoundException;
+import tobedone.task.application.port.incoming.CompleteTaskUseCase;
+import tobedone.task.application.port.incoming.CreateTaskUseCase;
+import tobedone.task.application.port.incoming.ListTasksUseCase;
+import tobedone.task.application.exception.TaskNotFoundException;
 
 class TaskControllerIntegrationTest {
 
@@ -62,7 +60,7 @@ class TaskControllerIntegrationTest {
         Instant now = Instant.parse("2026-05-16T12:00:00Z");
 
         CreateTaskOutput output = new CreateTaskOutput(taskId, "Estudar Spring Boot", "OPEN", now, null);
-        when(createTaskUseCase.execute("Estudar Spring Boot")).thenReturn(output);
+        when(createTaskUseCase.execute(new CreateTaskInput("Estudar Spring Boot"))).thenReturn(output);
 
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +96,7 @@ class TaskControllerIntegrationTest {
         Instant completedAt = Instant.parse("2026-05-16T12:30:00Z");
 
         CompleteTaskOutput output = new CompleteTaskOutput(taskId, completedAt);
-        when(completeTaskUseCase.execute(taskId)).thenReturn(output);
+        when(completeTaskUseCase.execute(new CompleteTaskInput(taskId))).thenReturn(output);
 
         mockMvc.perform(patch("/tasks/{id}/complete", taskId))
                 .andExpect(status().isOk())
@@ -122,7 +120,7 @@ class TaskControllerIntegrationTest {
     @Test
     void shouldReturn404WhenTaskDoesNotExist() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000004");
-        when(completeTaskUseCase.execute(eq(taskId))).thenThrow(new TaskNotFoundException(taskId));
+        when(completeTaskUseCase.execute(eq(new CompleteTaskInput(taskId)))).thenThrow(new TaskNotFoundException(taskId));
 
         mockMvc.perform(patch("/tasks/{id}/complete", taskId))
                 .andExpect(status().isNotFound())
@@ -132,7 +130,8 @@ class TaskControllerIntegrationTest {
     @Test
     void shouldReturn409WhenTaskStateIsInvalid() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000005");
-        when(completeTaskUseCase.execute(eq(taskId))).thenThrow(new InvalidTaskStateException("Task already completed"));
+        when(completeTaskUseCase.execute(eq(new CompleteTaskInput(taskId))))
+                .thenThrow(new IllegalStateException("Task already completed"));
 
         mockMvc.perform(patch("/tasks/{id}/complete", taskId))
                 .andExpect(status().isConflict())

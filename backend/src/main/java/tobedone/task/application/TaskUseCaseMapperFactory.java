@@ -1,6 +1,6 @@
 package tobedone.task.application;
 
-import tobedone.task.application.port.input.TaskUseCaseMapper;
+import tobedone.task.application.port.incoming.TaskUseCaseMapper;
 
 public final class TaskUseCaseMapperFactory {
 

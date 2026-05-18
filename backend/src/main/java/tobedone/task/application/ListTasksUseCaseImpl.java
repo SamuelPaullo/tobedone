@@ -4,9 +4,9 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import tobedone.task.application.dto.TaskOutput;
-import tobedone.task.application.port.input.ListTasksUseCase;
-import tobedone.task.application.port.input.TaskUseCaseMapper;
-import tobedone.task.application.port.output.TaskRepository;
+import tobedone.task.application.port.incoming.ListTasksUseCase;
+import tobedone.task.application.port.incoming.TaskUseCaseMapper;
+import tobedone.task.application.port.outgoing.TaskRepository;
 
 @RequiredArgsConstructor
 class ListTasksUseCaseImpl implements ListTasksUseCase {

@@ -2,7 +2,6 @@ package tobedone.task.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import tobedone.task.domain.exception.InvalidTaskStateException;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class Task {
 
     public void markAsComplete() {
         if (status == TaskStatus.COMPLETED) {
-            throw new InvalidTaskStateException("Task is already completed");
+            throw new IllegalStateException("Task is already completed");
         }
         status = TaskStatus.COMPLETED;
         completedAt = Instant.now();

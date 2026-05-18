@@ -7,12 +7,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import tobedone.task.domain.Task;
-import tobedone.task.application.port.output.TaskRepository;
+import tobedone.task.application.port.outgoing.TaskRepository;
 import tobedone.task.infrastructure.repository.jpa.TaskJpaMapper;
 import tobedone.task.infrastructure.repository.jpa.SpringDataTaskJpaRepository;
 
 @Repository
-public class TaskRepositoryImpl implements TaskRepository {
+class TaskRepositoryImpl implements TaskRepository {
 
 	private final SpringDataTaskJpaRepository jpaRepository;
 	private final TaskJpaMapper mapper;

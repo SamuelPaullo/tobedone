@@ -1,4 +1,4 @@
-package tobedone.task.domain.exception;
+package tobedone.task.application.exception;
 
 import java.util.UUID;
 

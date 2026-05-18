@@ -1,4 +1,4 @@
-package tobedone.task.application.port.output;
+package tobedone.task.application.port.outgoing;
 
 import java.util.List;
 import java.util.Optional;

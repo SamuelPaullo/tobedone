@@ -1,15 +1,19 @@
 package tobedone.task.api;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import tobedone.task.api.dto.CompleteTaskResponse;
+import tobedone.task.application.dto.CompleteTaskInput;
 import tobedone.task.api.dto.TaskResponse;
 import tobedone.task.application.dto.CompleteTaskOutput;
+import tobedone.task.application.dto.CreateTaskInput;
 import tobedone.task.application.dto.CreateTaskOutput;
 import tobedone.task.application.dto.TaskOutput;
 
 @Component
-public class TaskApiMapper {
+class TaskApiMapper {
 
 	public CompleteTaskResponse toResponse(CompleteTaskOutput output) {
 		return new CompleteTaskResponse(output.taskId(), output.completedAt());
@@ -33,5 +37,13 @@ public class TaskApiMapper {
 			output.createdAt(),
 			output.completedAt()
 		);
+	}
+
+	public CreateTaskInput toInput(String title) {
+		return new CreateTaskInput(title);
+	}
+
+	public CompleteTaskInput toInput(UUID taskId) {
+		return new CompleteTaskInput(taskId);
 	}
 }

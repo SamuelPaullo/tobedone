@@ -20,9 +20,9 @@ import jakarta.validation.Valid;
 import tobedone.task.api.dto.CompleteTaskResponse;
 import tobedone.task.api.dto.CreateTaskRequest;
 import tobedone.task.api.dto.TaskResponse;
-import tobedone.task.application.port.input.CompleteTaskUseCase;
-import tobedone.task.application.port.input.CreateTaskUseCase;
-import tobedone.task.application.port.input.ListTasksUseCase;
+import tobedone.task.application.port.incoming.CompleteTaskUseCase;
+import tobedone.task.application.port.incoming.CreateTaskUseCase;
+import tobedone.task.application.port.incoming.ListTasksUseCase;
 
 @RestController
 @RequestMapping("/tasks")
@@ -39,7 +39,7 @@ public class TaskController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
 	public TaskResponse create(@Valid @RequestBody CreateTaskRequest request) {
-		var output = createTaskUseCase.execute(request.title());
+		var output = createTaskUseCase.execute(mapper.toInput(request.title()));
 		return mapper.toResponse(output);
 	}
 
@@ -50,7 +50,7 @@ public class TaskController {
 
 	@PatchMapping("/{id}/complete")
 	public CompleteTaskResponse complete(@PathVariable UUID id) {
-		var output = completeTaskUseCase.execute(id);
+		var output = completeTaskUseCase.execute(mapper.toInput(id));
 		return mapper.toResponse(output);
 	}
 }

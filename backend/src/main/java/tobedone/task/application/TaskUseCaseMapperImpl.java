@@ -3,7 +3,7 @@ package tobedone.task.application;
 import tobedone.task.application.dto.CompleteTaskOutput;
 import tobedone.task.application.dto.CreateTaskOutput;
 import tobedone.task.application.dto.TaskOutput;
-import tobedone.task.application.port.input.TaskUseCaseMapper;
+import tobedone.task.application.port.incoming.TaskUseCaseMapper;
 import tobedone.task.domain.Task;
 
 class TaskUseCaseMapperImpl implements TaskUseCaseMapper {
