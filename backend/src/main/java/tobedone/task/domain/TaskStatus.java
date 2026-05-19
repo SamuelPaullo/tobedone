@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum TaskStatus {
-
-	OPEN("OPEN"),
-	COMPLETED("COMPLETED");
-
-	private final String description;
+    OPEN,
+    COMPLETED
 }
 

@@ -28,8 +28,9 @@ import tobedone.task.application.port.incoming.CompleteTaskUseCase;
 import tobedone.task.application.port.incoming.CreateTaskUseCase;
 import tobedone.task.application.port.incoming.ListTasksUseCase;
 import tobedone.task.application.exception.TaskNotFoundException;
+import tobedone.task.application.exception.TaskStateConflictException;
 
-class TaskControllerIntegrationTest {
+class TaskControllerTest {
 
     private MockMvc mockMvc;
     private CreateTaskUseCase createTaskUseCase;
@@ -131,7 +132,7 @@ class TaskControllerIntegrationTest {
     void shouldReturn409WhenTaskStateIsInvalid() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000005");
         when(completeTaskUseCase.execute(eq(new CompleteTaskInput(taskId))))
-                .thenThrow(new IllegalStateException("Task already completed"));
+                .thenThrow(new TaskStateConflictException("Task already completed", null));
 
         mockMvc.perform(patch("/tasks/{id}/complete", taskId))
                 .andExpect(status().isConflict())

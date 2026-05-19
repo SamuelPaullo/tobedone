@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import tobedone.task.application.exception.TaskNotFoundException;
+import tobedone.task.application.exception.TaskStateConflictException;
+import tobedone.task.application.exception.TaskTitleConflictException;
 
 @RestControllerAdvice
 class TaskExceptionHandler {
@@ -19,10 +21,16 @@ class TaskExceptionHandler {
 				.body(new ApiError("TASK_NOT_FOUND", ex.getMessage(), Instant.now()));
 	}
 
-	@ExceptionHandler(IllegalStateException.class)
-	public ResponseEntity<?> handleInvalidState(IllegalStateException ex) {
+	@ExceptionHandler(TaskStateConflictException.class)
+	public ResponseEntity<?> handleInvalidState(TaskStateConflictException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT)
 				.body(new ApiError("INVALID_TASK_STATE", ex.getMessage(), Instant.now()));
+	}
+
+	@ExceptionHandler(TaskTitleConflictException.class)
+	public ResponseEntity<?> handleInvalidTitle(TaskTitleConflictException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+				.body(new ApiError("INVALID_TASK_TITLE", ex.getMessage(), Instant.now()));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

@@ -18,7 +18,7 @@ class TaskUseCaseMapperImpl implements TaskUseCaseMapper {
         return new CreateTaskOutput(
                 task.getId(),
                 task.getTitle(),
-                task.getStatus().getDescription(),
+                task.getStatus().name(),
                 task.getCreatedAt(),
                 task.getCompletedAt()
         );
@@ -29,7 +29,7 @@ class TaskUseCaseMapperImpl implements TaskUseCaseMapper {
         return new TaskOutput(
                 task.getId(),
                 task.getTitle(),
-                task.getStatus().getDescription(),
+                task.getStatus().name(),
                 task.getCreatedAt(),
                 task.getCompletedAt()
         );
