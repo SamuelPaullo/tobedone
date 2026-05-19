@@ -12,6 +12,7 @@ import tobedone.task.application.exception.TaskNotFoundException;
 import tobedone.task.application.exception.TaskStateConflictException;
 import tobedone.task.application.exception.TaskTitleConflictException;
 
+@SuppressWarnings("unused")
 @RestControllerAdvice
 class TaskExceptionHandler {
 
