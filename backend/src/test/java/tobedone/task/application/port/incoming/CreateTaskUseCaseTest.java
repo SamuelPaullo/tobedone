@@ -1,7 +1,7 @@
 package tobedone.task.application.port.incoming;
 
 import org.junit.jupiter.api.Test;
-import tobedone.task.application.TaskUseCasesFactory;
+import tobedone.task.application.TaskUseCaseFactory;
 import tobedone.task.application.dto.CreateTaskInput;
 import tobedone.task.application.dto.CreateTaskOutput;
 import tobedone.task.application.exception.TaskTitleConflictException;
@@ -30,7 +30,7 @@ class CreateTaskUseCaseTest {
             return new CreateTaskOutput(task.getId(), task.getTitle(), task.getStatus().name(), task.getCreatedAt(), task.getCompletedAt());
         });
 
-        CreateTaskUseCase useCase = TaskUseCasesFactory.createTaskUseCase(repository, mapper);
+        CreateTaskUseCase useCase = TaskUseCaseFactory.createTaskUseCase(repository, mapper);
 
         CreateTaskOutput output = useCase.execute(new CreateTaskInput(title));
 
@@ -50,7 +50,7 @@ class CreateTaskUseCaseTest {
         TaskRepository repository = mock(TaskRepository.class);
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        CreateTaskUseCase useCase = TaskUseCasesFactory.createTaskUseCase(repository, mapper);
+        CreateTaskUseCase useCase = TaskUseCaseFactory.createTaskUseCase(repository, mapper);
 
         assertThatThrownBy(() -> useCase.execute(null))
                 .isInstanceOf(NullPointerException.class);
@@ -65,7 +65,7 @@ class CreateTaskUseCaseTest {
         TaskRepository repository = mock(TaskRepository.class);
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        CreateTaskUseCase useCase = TaskUseCasesFactory.createTaskUseCase(repository, mapper);
+        CreateTaskUseCase useCase = TaskUseCaseFactory.createTaskUseCase(repository, mapper);
 
         assertThatThrownBy(() -> useCase.execute(new CreateTaskInput(null)))
                 .isInstanceOf(NullPointerException.class);
@@ -75,14 +75,14 @@ class CreateTaskUseCaseTest {
     }
 
     @Test
-    void throwsNullPointerExceptionWhenInputTitleIsEmpty() {
+    void throwsTaskTitleConflictExceptionWhenInputTitleIsEmpty() {
 
         var emptyTitle = "";
 
         TaskRepository repository = mock(TaskRepository.class);
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        CreateTaskUseCase useCase = TaskUseCasesFactory.createTaskUseCase(repository, mapper);
+        CreateTaskUseCase useCase = TaskUseCaseFactory.createTaskUseCase(repository, mapper);
 
         assertThatThrownBy(() -> useCase.execute(new CreateTaskInput(emptyTitle)))
                 .isInstanceOf(TaskTitleConflictException.class);

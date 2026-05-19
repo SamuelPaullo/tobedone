@@ -6,9 +6,9 @@ import tobedone.task.application.port.incoming.ListTasksUseCase;
 import tobedone.task.application.port.incoming.TaskUseCaseMapper;
 import tobedone.task.application.port.outgoing.TaskRepository;
 
-public final class TaskUseCasesFactory {
+public final class TaskUseCaseFactory {
 
-    private TaskUseCasesFactory() {
+    private TaskUseCaseFactory() {
     }
 
     public static CreateTaskUseCase createTaskUseCase(TaskRepository repository, TaskUseCaseMapper mapper) {

@@ -29,7 +29,7 @@ class TaskExceptionHandler {
 
 	@ExceptionHandler(TaskTitleConflictException.class)
 	public ResponseEntity<?> handleInvalidTitle(TaskTitleConflictException ex) {
-		return ResponseEntity.status(HttpStatus.CONFLICT)
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ApiError("INVALID_TASK_TITLE", ex.getMessage(), Instant.now()));
 	}
 

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TaskTest {
 
     @Test
-    void shouldCreateOpenTaskWithNullCompletedAt() {
+    void createsOpenTaskWithNullCompletedAt() {
         Task task = Task.create(UUID.randomUUID(), "Estudar Clean Arch", Instant.now());
 
         assertThat(task.getStatus()).isEqualTo(TaskStatus.OPEN);
@@ -21,7 +21,7 @@ class TaskTest {
     }
 
     @Test
-    void shouldMarkTaskAsComplete() {
+    void markTaskAsComplete() {
         Task task = Task.create(UUID.randomUUID(), "Estudar Clean Arch", Instant.now());
 
         task.markAsComplete();
@@ -31,7 +31,7 @@ class TaskTest {
     }
 
     @Test
-    void shouldThrowWhenMarkingAlreadyCompletedTask() {
+    void throwsWhenMarkingAlreadyCompletedTask() {
         Task task = Task.create(UUID.randomUUID(), "Estudar Clean Arch", Instant.now());
         task.markAsComplete();
 
@@ -41,7 +41,7 @@ class TaskTest {
     }
 
     @Test
-    void shouldThrowWhenCreatingCompletedTaskWithoutCompletedAt() {
+    void throwsWhenCreatingCompletedTaskWithoutCompletedAt() {
         assertThatThrownBy(() -> new Task(
                 UUID.randomUUID(),
                 "Estudar Clean Arch",
@@ -54,7 +54,7 @@ class TaskTest {
     }
 
     @Test
-    void shouldAllowCreatingCompletedTaskWithCompletedAt() {
+    void createsCompletedTask() {
         Instant completedAt = Instant.now();
         Task task = new Task(UUID.randomUUID(), "Estudar Clean Arch", TaskStatus.COMPLETED, Instant.now(), completedAt);
 
@@ -63,19 +63,19 @@ class TaskTest {
     }
 
     @Test
-    void shouldThrowWhenIdIsNull() {
+    void throwsWhenIdIsNull() {
         assertThatThrownBy(() -> new Task(null, "Título", TaskStatus.OPEN, Instant.now(), null))
                 .isInstanceOf(NullPointerException.class);
     }
 
     @Test
-    void shouldThrowWhenTitleIsNull() {
+    void throwsWhenTitleIsNull() {
         assertThatThrownBy(() -> new Task(UUID.randomUUID(), null, TaskStatus.OPEN, Instant.now(), null))
                 .isInstanceOf(NullPointerException.class);
     }
 
     @Test
-    void shouldThrowWhenTitleIsEmpty() {
+    void throwsWhenTitleIsEmpty() {
         var emptyTitle = " ";
         assertThatThrownBy(() -> Task.create(UUID.randomUUID(), emptyTitle, Instant.now()))
                 .isInstanceOf(InvalidTaskTitleException.class);

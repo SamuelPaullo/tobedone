@@ -1,7 +1,7 @@
 package tobedone.task.application.port.incoming;
 
 import org.junit.jupiter.api.Test;
-import tobedone.task.application.TaskUseCasesFactory;
+import tobedone.task.application.TaskUseCaseFactory;
 import tobedone.task.application.dto.CompleteTaskInput;
 import tobedone.task.application.dto.CompleteTaskOutput;
 import tobedone.task.application.exception.TaskNotFoundException;
@@ -37,7 +37,7 @@ class CompleteTaskUseCaseTest {
             return new CompleteTaskOutput(task.getId(), task.getCompletedAt());
         });
 
-        CompleteTaskUseCase useCase = TaskUseCasesFactory.completeTaskUseCase(repository, mapper);
+        CompleteTaskUseCase useCase = TaskUseCaseFactory.completeTaskUseCase(repository, mapper);
 
         CompleteTaskOutput output = useCase.execute(new CompleteTaskInput(taskId));
 
@@ -49,7 +49,7 @@ class CompleteTaskUseCaseTest {
     }
 
     @Test
-    void shouldTranslateDomainInvalidStateToApplicationException() {
+    void translateDomainInvalidStateToApplicationException() {
 
         UUID taskId = UUID.randomUUID();
         Task completedTask = new Task(
@@ -65,7 +65,7 @@ class CompleteTaskUseCaseTest {
 
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        CompleteTaskUseCase useCase = TaskUseCasesFactory.completeTaskUseCase(repository, mapper);
+        CompleteTaskUseCase useCase = TaskUseCaseFactory.completeTaskUseCase(repository, mapper);
 
         assertThatThrownBy(() -> useCase.execute(new CompleteTaskInput(taskId)))
                 .isInstanceOf(TaskStateConflictException.class)
@@ -82,7 +82,7 @@ class CompleteTaskUseCaseTest {
 
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        CompleteTaskUseCase useCase = TaskUseCasesFactory.completeTaskUseCase(repository, mapper);
+        CompleteTaskUseCase useCase = TaskUseCaseFactory.completeTaskUseCase(repository, mapper);
 
         assertThatThrownBy(() -> useCase.execute(new CompleteTaskInput(taskId)))
                 .isInstanceOf(TaskNotFoundException.class)
@@ -98,7 +98,7 @@ class CompleteTaskUseCaseTest {
         TaskRepository repository = mock(TaskRepository.class);
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        CompleteTaskUseCase useCase = TaskUseCasesFactory.completeTaskUseCase(repository, mapper);
+        CompleteTaskUseCase useCase = TaskUseCaseFactory.completeTaskUseCase(repository, mapper);
 
         assertThatThrownBy(() -> useCase.execute(null))
                 .isInstanceOf(NullPointerException.class);

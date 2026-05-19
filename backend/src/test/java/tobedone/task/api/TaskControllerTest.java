@@ -56,7 +56,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void shouldCreateTask() throws Exception {
+    void createsTask() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000001");
         Instant now = Instant.parse("2026-05-16T12:00:00Z");
 
@@ -77,7 +77,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void shouldListTasks() throws Exception {
+    void listTasks() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000002");
         Instant now = Instant.parse("2026-05-16T12:00:00Z");
 
@@ -92,7 +92,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void shouldCompleteTask() throws Exception {
+    void completesTask() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000003");
         Instant completedAt = Instant.parse("2026-05-16T12:30:00Z");
 
@@ -106,7 +106,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void shouldReturn400WhenCreatePayloadIsInvalid() throws Exception {
+    void returns400WhenCreatePayloadIsInvalid() throws Exception {
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -119,7 +119,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void shouldReturn404WhenTaskDoesNotExist() throws Exception {
+    void returns404WhenTaskDoesNotExist() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000004");
         when(completeTaskUseCase.execute(eq(new CompleteTaskInput(taskId)))).thenThrow(new TaskNotFoundException(taskId));
 
@@ -129,7 +129,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void shouldReturn409WhenTaskStateIsInvalid() throws Exception {
+    void returns409WhenTaskStateIsInvalid() throws Exception {
         UUID taskId = UUID.fromString("00000000-0000-0000-0000-000000000005");
         when(completeTaskUseCase.execute(eq(new CompleteTaskInput(taskId))))
                 .thenThrow(new TaskStateConflictException("Task already completed", null));

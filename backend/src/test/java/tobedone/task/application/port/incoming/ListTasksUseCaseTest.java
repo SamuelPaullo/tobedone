@@ -1,7 +1,7 @@
 package tobedone.task.application.port.incoming;
 
 import org.junit.jupiter.api.Test;
-import tobedone.task.application.TaskUseCasesFactory;
+import tobedone.task.application.TaskUseCaseFactory;
 import tobedone.task.application.dto.TaskOutput;
 import tobedone.task.application.port.outgoing.TaskRepository;
 import tobedone.task.domain.Task;
@@ -31,7 +31,7 @@ public class ListTasksUseCaseTest {
             return new TaskOutput(task.getId(), task.getTitle(), task.getStatus().name(), task.getCreatedAt(), task.getCompletedAt());
         });
 
-        ListTasksUseCase useCase = TaskUseCasesFactory.listTasksUseCase(repository, mapper);
+        ListTasksUseCase useCase = TaskUseCaseFactory.listTasksUseCase(repository, mapper);
 
         List<TaskOutput> outputs = useCase.execute();
 
@@ -51,7 +51,7 @@ public class ListTasksUseCaseTest {
 
         TaskUseCaseMapper mapper = mock(TaskUseCaseMapper.class);
 
-        ListTasksUseCase useCase = TaskUseCasesFactory.listTasksUseCase(repository, mapper);
+        ListTasksUseCase useCase = TaskUseCaseFactory.listTasksUseCase(repository, mapper);
 
         List<TaskOutput> outputs = useCase.execute();
 
