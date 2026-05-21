@@ -1,0 +1,12 @@
+<section class="task-list">
+
+    @if (tasks().length === 0) {
+    <p>Nenhuma tarefa cadastrada ainda.</p>
+    } @else {
+
+    @for (task of tasks(); track task.id) {
+    <task-list-item [task]="task" />
+    }
+
+    }
+</section>

@@ -1,0 +1,29 @@
+<div class="task-item">
+
+    <mat-checkbox [checked]="task().completed" [disabled]="task().completed" (change)="markAsCompleted()" />
+
+    @if (!isEditing()) {
+    <span class="task-title" (dblclick)="startEditing()">{{task().title}}</span>
+    } @else {
+    <input #titleInput class="task-title-input" [value]="task().title" (blur)="finishEditing()"
+        (keydown.enter)="finishEditing()" (keydown.escape)="cancelEditing()" placeholder="Título da tarefa" />
+    }
+
+    <button matIconButton [matMenuTriggerFor]="menu" class="task-menu" aria-label="Mais opções">
+        <mat-icon class="task-menu-icon">more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="startEditing()">
+            <mat-icon>edit</mat-icon>
+            <span>Renomear</span>
+        </button>
+        <button mat-menu-item [disabled]="task().completed" (click)="markAsCompleted()">
+            <mat-icon>check_circle</mat-icon>
+            <span>Marcar como concluído</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon>archive</mat-icon>
+            <span>Arquivar</span>
+        </button>
+    </mat-menu>
+</div>

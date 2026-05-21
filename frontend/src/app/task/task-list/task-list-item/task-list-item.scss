@@ -1,0 +1,62 @@
+
+$task-title-color: inherit;
+$task-title-font: inherit;
+$task-title-size: 1em;
+$task-title-weight: 400;
+$task-title-line-height: 1.5;
+$task-title-letter-spacing: normal;
+$task-title-margin: 0 8px;
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.task-title,
+.task-title-input {
+  flex: 1;
+  font-family: $task-title-font;
+  font-size: $task-title-size;
+  font-weight: $task-title-weight;
+  color: $task-title-color;
+  line-height: $task-title-line-height;
+  letter-spacing: $task-title-letter-spacing;
+  margin: $task-title-margin;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
+  transition: color 0.2s, font-style 0.2s;
+}
+
+.task-title-input {
+  color: #1976d2; // Azul Material
+  font-style: italic;
+  font-weight: 500;
+  &:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.task-menu {
+  background: none;
+  border: none;
+  font-size: 1.3em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+
+  .task-menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
