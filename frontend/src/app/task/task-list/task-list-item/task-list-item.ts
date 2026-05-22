@@ -1,8 +1,11 @@
 import { Task } from '../../model/task.model';
-import { Component, ElementRef, input, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TaskTitleUpdatedOutput } from './output/task-title-updated.output';
+import { ToggleTaskCompletionOutput } from './output/toggle-task-completion.output';
+import { ArchiveTaskOutput } from './output/archive-task.output';
 
 @Component({
   selector: 'task-list-item',
@@ -13,6 +16,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 export class TaskListItem {
 
   readonly task = input.required<Task>();
+
+  readonly onTitleUpdated = output<TaskTitleUpdatedOutput>();
+  readonly onToggleTaskCompletion = output<ToggleTaskCompletionOutput>();
+  readonly onArchiveTask = output<ArchiveTaskOutput>();
+
   protected readonly isEditing = signal(false);
   private shouldFocus = false;
   private preventEditFinished = false;
@@ -20,8 +28,11 @@ export class TaskListItem {
   @ViewChild('titleInput')
   private titleInputRef!: ElementRef<HTMLInputElement>;
 
-  protected markAsCompleted() {
-    this.task().completed = true;
+  protected toggleCompleted() {
+    this.onToggleTaskCompletion.emit({
+      taskId: this.task().id,
+      completed: !this.task().completed,
+    });
   }
 
   protected startEditing() {
@@ -35,12 +46,19 @@ export class TaskListItem {
   }
 
   protected finishEditing() {
-    if(this.preventEditFinished) {
+    if (this.preventEditFinished) {
       this.preventEditFinished = false;
       return;
     }
-    this.task().title = this.titleInputRef.nativeElement.value;
+    this.onTitleUpdated.emit({
+      taskId: this.task().id,
+      newTitle: this.titleInputRef.nativeElement.value,
+    });
     this.isEditing.set(false);
+  }
+
+  protected archive() {
+    this.onArchiveTask.emit({ taskId: this.task().id });
   }
 
   protected ngAfterViewChecked() {
