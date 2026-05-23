@@ -5,8 +5,8 @@
     @if (!isEditing()) {
     <span class="task-title" (dblclick)="startEditing()">{{task().title}}</span>
     } @else {
-    <input #titleInput class="task-title-input" [value]="task().title" (blur)="finishEditing()"
-        (keydown.enter)="finishEditing()" (keydown.escape)="cancelEditing()" placeholder="Título da tarefa" />
+    <input #titleInput class="task-title-input" [value]="task().title" (blur)="handleTitleInputBlur()"
+        (keydown)="handleTitleInputKeydown($event)" placeholder="Título da tarefa" />
     }
 
     <button matIconButton [matMenuTriggerFor]="menu" class="task-menu" aria-label="Mais opções">

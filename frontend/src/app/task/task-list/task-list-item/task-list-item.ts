@@ -22,8 +22,6 @@ export class TaskListItem {
   readonly onArchiveTask = output<ArchiveTaskOutput>();
 
   protected readonly isEditing = signal(false);
-  private shouldFocus = false;
-  private preventEditFinished = false;
 
   @ViewChild('titleInput')
   private titleInputRef!: ElementRef<HTMLInputElement>;
@@ -37,23 +35,20 @@ export class TaskListItem {
 
   protected startEditing() {
     this.isEditing.set(true);
-    this.shouldFocus = true;
   }
 
   protected cancelEditing() {
-    this.preventEditFinished = true;
     this.isEditing.set(false);
   }
 
   protected finishEditing() {
-    if (this.preventEditFinished) {
-      this.preventEditFinished = false;
-      return;
+    const newTitle = this.titleInputRef.nativeElement.value.trim();
+    if (newTitle !== this.task().title) {
+      this.onTitleUpdated.emit({
+        taskId: this.task().id,
+        newTitle,
+      });
     }
-    this.onTitleUpdated.emit({
-      taskId: this.task().id,
-      newTitle: this.titleInputRef.nativeElement.value,
-    });
     this.isEditing.set(false);
   }
 
@@ -62,17 +57,29 @@ export class TaskListItem {
   }
 
   protected ngAfterViewChecked() {
-    console.log('ngAfterViewChecked called');
-    if (this.shouldFocus) {
-      this.ensureFocusInTitleInput();
-      this.shouldFocus = false;
+    if (this.isEditing()) {
+      this.requestFocusInTitleInput();
     }
   }
 
-  private ensureFocusInTitleInput(): void {
+  private requestFocusInTitleInput() {
     if (this.titleInputRef) {
       const input = this.titleInputRef.nativeElement;
       input.focus();
+    }
+  }
+
+  protected handleTitleInputBlur() {
+    if (this.isEditing()) {
+      this.finishEditing();
+    }
+  }
+
+  protected handleTitleInputKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.finishEditing();
+    } else if (event.key === 'Escape') {
+      this.cancelEditing();
     }
   }
 }

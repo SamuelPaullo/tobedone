@@ -5,7 +5,8 @@
     } @else {
 
     @for (task of tasks(); track task.id) {
-    <task-list-item [task]="task" />
+    <task-list-item [task]="task" (onTitleUpdated)="handleTitleUpdated($event)"
+        (onToggleTaskCompletion)="handleToggleTaskCompletion($event)" (onArchiveTask)="handleArchiveTask($event)" />
     }
 
     }
