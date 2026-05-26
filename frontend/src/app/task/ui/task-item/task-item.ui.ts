@@ -3,17 +3,19 @@ import { Component, ElementRef, input, output, signal, ViewChild } from '@angula
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { TaskTitleUpdatedOutput } from './output/task-title-updated.output';
-import { ToggleTaskCompletionOutput } from './output/toggle-task-completion.output';
-import { ArchiveTaskOutput } from './output/archive-task.output';
+import {
+  TaskTitleUpdatedOutput,
+  ToggleTaskCompletionOutput,
+  ArchiveTaskOutput,
+} from '.';
 
 @Component({
-  selector: 'task-list-item',
+  selector: 'task-item-ui',
   imports: [MatMenuModule, MatIconModule, MatCheckboxModule],
-  templateUrl: './task-list-item.html',
-  styleUrl: './task-list-item.scss',
+  templateUrl: './task-item.ui.html',
+  styleUrl: './task-item.ui.scss',
 })
-export class TaskListItem {
+export class TaskItemUi {
 
   readonly task = input.required<Task>();
 

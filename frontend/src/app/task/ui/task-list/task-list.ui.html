@@ -1,0 +1,35 @@
+<section class="task-list">
+  <header class="task-list-title">
+    @if (isEditingTitle()) {
+      <input
+        #taskListTitleInput
+        class="task-list-title-input"
+        [value]="taskList().title"
+        (blur)="handleListTitleInputBlur()"
+        (keydown)="handleListTitleInputKeydown($event)"
+        placeholder="Título da lista"
+      />
+    } @else {
+      {{ taskList().title }}
+      <button
+        class="task-list-edit-title-button"
+        (click)="startEditingListTitle()"
+        aria-label="Editar título da lista"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+    }
+  </header>
+  @if (taskList().tasks.length === 0) {
+    <p>Nenhuma tarefa cadastrada ainda.</p>
+  } @else {
+    @for (task of taskList().tasks; track task.id) {
+      <task-item-ui
+        [task]="task"
+        (onTitleUpdated)="handleTaskTitleUpdated($event)"
+        (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
+        (onArchiveTask)="handleTaskArchived($event)"
+      />
+    }
+  }
+</section>
