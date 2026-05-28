@@ -1,1 +1,29 @@
-<task-list-ui [taskList]="taskListMock" />
+<main class="task-board">
+  <section>
+    <task-list-ui
+      [taskList]="todo"
+      (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
+      (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
+      (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
+      (onTaskArchived)="handleTaskArchived($event)"
+    />
+  </section>
+  <section>
+    <task-list-ui
+      [taskList]="inProgress"
+      (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
+      (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
+      (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
+      (onTaskArchived)="handleTaskArchived($event)"
+    />
+  </section>
+  <section>
+    <task-list-ui
+      [taskList]="done"
+      (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
+      (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
+      (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
+      (onTaskArchived)="handleTaskArchived($event)"
+    />
+  </section>
+</main>

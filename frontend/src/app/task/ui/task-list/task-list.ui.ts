@@ -1,7 +1,8 @@
 import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TaskList } from '../../model';
-import { TaskListTitleUpdatedOutput } from './ouput';
+import { TaskListTitleUpdatedOutput, TaskUpdateOutput } from './ouput';
 import {
   TaskItemUi,
   ArchiveTaskOutput,
@@ -11,7 +12,7 @@ import {
 
 @Component({
   selector: 'task-list-ui',
-  imports: [TaskItemUi, MatIcon],
+  imports: [TaskItemUi, MatIcon, MatButtonModule],
   templateUrl: './task-list.ui.html',
   styleUrl: './task-list.ui.scss',
 })
@@ -19,8 +20,12 @@ export class TaskListUi {
   readonly taskList = input.required<TaskList>();
 
   readonly onTaskListTitleUpdated = output<TaskListTitleUpdatedOutput>();
+  readonly onTaskTitleUpdated = output<TaskUpdateOutput<TaskTitleUpdatedOutput>>();
+  readonly onToggleTaskCompletion = output<TaskUpdateOutput<ToggleTaskCompletionOutput>>();
+  readonly onTaskArchived = output<TaskUpdateOutput<ArchiveTaskOutput>>();
 
   protected isEditingTitle = signal(false);
+  protected isMouseOverTitle = signal(false);
 
   @ViewChild('taskListTitleInput')
   private taskListTitleInputRef!: ElementRef<HTMLInputElement>;
@@ -68,6 +73,11 @@ export class TaskListUi {
     }
   }
 
+  /*********************
+   * ADD TASK HANDLERS *
+   *********************/
+  protected handleAddTaskButtonClick() {}
+
   /***************************
    * ANGULAR LIFECYCLE HOOKS *
    ***************************/
@@ -77,20 +87,27 @@ export class TaskListUi {
     }
   }
 
-  /******************************
-   * TASK ITEMS OUTPUT HANDLERS *
-   ******************************/
-  protected handleTaskTitleUpdated(output: TaskTitleUpdatedOutput): TaskTitleUpdatedOutput {
-    return output;
+  /******************************************
+   * TASK ITEMS OUTPUT PROPAGATION HANDLERS *
+   ******************************************/
+  protected handleTaskTitleUpdated(output: TaskTitleUpdatedOutput) {
+    this.onTaskTitleUpdated.emit({
+      taskListId: this.taskList().id,
+      value: output,
+    });
   }
 
-  protected handleToggleTaskCompletion(
-    output: ToggleTaskCompletionOutput,
-  ): ToggleTaskCompletionOutput {
-    return output;
+  protected handleToggleTaskCompletion(output: ToggleTaskCompletionOutput) {
+    this.onToggleTaskCompletion.emit({
+      taskListId: this.taskList().id,
+      value: output,
+    });
   }
 
-  protected handleTaskArchived(output: ArchiveTaskOutput): ArchiveTaskOutput {
-    return output;
+  protected handleTaskArchived(output: ArchiveTaskOutput) {
+    this.onTaskArchived.emit({
+      taskListId: this.taskList().id,
+      value: output,
+    });
   }
 }

@@ -1,18 +1,23 @@
 <section class="task-list">
-  <header class="task-list-title">
+  <header
+    class="task-list-header"
+    (mouseenter)="isMouseOverTitle.set(true)"
+    (mouseleave)="isMouseOverTitle.set(false)"
+  >
     @if (isEditingTitle()) {
       <input
         #taskListTitleInput
-        class="task-list-title-input"
+        class="task-list-title-edit-input"
         [value]="taskList().title"
         (blur)="handleListTitleInputBlur()"
         (keydown)="handleListTitleInputKeydown($event)"
         placeholder="Título da lista"
       />
     } @else {
-      {{ taskList().title }}
+      <span class="task-list-title">{{ taskList().title }}</span>
       <button
-        class="task-list-edit-title-button"
+        class="task-list-title-edit-button"
+        [class.invisible]="!isMouseOverTitle()"
         (click)="startEditingListTitle()"
         aria-label="Editar título da lista"
       >
@@ -21,7 +26,7 @@
     }
   </header>
   @if (taskList().tasks.length === 0) {
-    <p>Nenhuma tarefa cadastrada ainda.</p>
+    <p class="no-tasks-message">Nenhuma tarefa cadastrada ainda.</p>
   } @else {
     @for (task of taskList().tasks; track task.id) {
       <task-item-ui
@@ -32,4 +37,15 @@
       />
     }
   }
+  <footer class="task-list-footer">
+    <button
+      mat-button
+      class="add-task-button"
+      (click)="handleAddTaskButtonClick()"
+      aria-label="Adicionar nova tarefa"
+    >
+      <mat-icon>add</mat-icon>
+      <span class="add-task-button-label">Adicionar tarefa</span>
+    </button>
+  </footer>
 </section>
