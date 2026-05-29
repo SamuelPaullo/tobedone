@@ -1,13 +1,19 @@
 import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { TaskList } from '../../model';
-import { TaskListTitleUpdatedOutput, TaskUpdateOutput } from './ouput';
+import { Task, TaskList } from '../../model';
+import {
+  TaskListTitleUpdatedOutput,
+  TaskUpdateOutput,
+  NewTaskRequestOutput,
+  NewTaskSkippedOutput,
+} from './ouput';
 import {
   TaskItemUi,
   ArchiveTaskOutput,
   TaskTitleUpdatedOutput,
   ToggleTaskCompletionOutput,
+  TaskEditSkippedOutput,
 } from '../task-item';
 
 @Component({
@@ -23,6 +29,8 @@ export class TaskListUi {
   readonly onTaskTitleUpdated = output<TaskUpdateOutput<TaskTitleUpdatedOutput>>();
   readonly onToggleTaskCompletion = output<TaskUpdateOutput<ToggleTaskCompletionOutput>>();
   readonly onTaskArchived = output<TaskUpdateOutput<ArchiveTaskOutput>>();
+  readonly onNewTaskRequested = output<NewTaskRequestOutput>();
+  readonly onNewTaskSkipped = output<NewTaskSkippedOutput>();
 
   protected isEditingTitle = signal(false);
   protected isMouseOverTitle = signal(false);
@@ -76,7 +84,13 @@ export class TaskListUi {
   /*********************
    * ADD TASK HANDLERS *
    *********************/
-  protected handleAddTaskButtonClick() {}
+  protected handleAddTaskButtonClick() {
+    this.onNewTaskRequested.emit({ taskListId: this.taskList().id });
+  }
+
+  protected handleNewTaskSkipped(output: TaskEditSkippedOutput) {
+    this.onNewTaskSkipped.emit({ taskListId: this.taskList().id });
+  }
 
   /***************************
    * ANGULAR LIFECYCLE HOOKS *
@@ -109,5 +123,12 @@ export class TaskListUi {
       taskListId: this.taskList().id,
       value: output,
     });
+  }
+
+  /******************
+   * HELPER METHODS *
+   ******************/
+  isNewTask(task: Task): boolean {
+    return !task.id;
   }
 }

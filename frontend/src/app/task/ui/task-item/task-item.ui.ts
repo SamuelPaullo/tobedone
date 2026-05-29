@@ -1,13 +1,9 @@
 import { Task } from '../../model/task.model';
-import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, input, output, signal, ViewChild } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import {
-  TaskTitleUpdatedOutput,
-  ToggleTaskCompletionOutput,
-  ArchiveTaskOutput,
-} from '.';
+import { TaskTitleUpdatedOutput, ToggleTaskCompletionOutput, ArchiveTaskOutput, TaskEditSkippedOutput } from '.';
 
 @Component({
   selector: 'task-item-ui',
@@ -16,14 +12,16 @@ import {
   styleUrl: './task-item.ui.scss',
 })
 export class TaskItemUi {
-
   readonly task = input.required<Task>();
 
   readonly onTitleUpdated = output<TaskTitleUpdatedOutput>();
   readonly onToggleTaskCompletion = output<ToggleTaskCompletionOutput>();
   readonly onArchiveTask = output<ArchiveTaskOutput>();
+  readonly onEditSkipped = output<TaskEditSkippedOutput>();
 
-  protected readonly isEditing = signal(false);
+  readonly editModeEnabled = input<boolean>(false);
+  private readonly internalEditMode = signal(false);
+  protected readonly isEditing = computed(() => this.editModeEnabled() || this.internalEditMode());
 
   @ViewChild('titleInput')
   private titleInputRef!: ElementRef<HTMLInputElement>;
@@ -36,11 +34,12 @@ export class TaskItemUi {
   }
 
   protected startEditing() {
-    this.isEditing.set(true);
+    this.internalEditMode.set(true);
   }
 
   protected cancelEditing() {
-    this.isEditing.set(false);
+    this.internalEditMode.set(false);
+    this.onEditSkipped.emit({ taskId: this.task().id });
   }
 
   protected finishEditing() {
@@ -50,8 +49,10 @@ export class TaskItemUi {
         taskId: this.task().id,
         newTitle,
       });
+      this.internalEditMode.set(false);
+    } else {
+      this.cancelEditing();
     }
-    this.isEditing.set(false);
   }
 
   protected archive() {
@@ -60,11 +61,11 @@ export class TaskItemUi {
 
   protected ngAfterViewChecked() {
     if (this.isEditing()) {
-      this.requestFocusInTitleInput();
+      this.setFocusInTitleInput();
     }
   }
 
-  private requestFocusInTitleInput() {
+  private setFocusInTitleInput() {
     if (this.titleInputRef) {
       const input = this.titleInputRef.nativeElement;
       input.focus();

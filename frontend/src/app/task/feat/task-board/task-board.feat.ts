@@ -6,8 +6,10 @@ import {
   TaskTitleUpdatedOutput,
   ToggleTaskCompletionOutput,
   ArchiveTaskOutput,
+  NewTaskRequestOutput,
+  NewTaskSkippedOutput,
 } from '../../ui/task-list';
-import { TaskList } from '../../model';
+import { Task, emptyTask, TaskList } from '../../model';
 
 @Component({
   selector: 'task-board-feat',
@@ -108,6 +110,27 @@ export class TaskBoardFeat {
     }
   }
 
+  /**************************
+   * TASK CREATION HANDLERS *
+   **************************/
+  protected handleNewTaskRequested({ taskListId }: NewTaskRequestOutput) {
+    const taskList = this.getTaskListById(taskListId);
+    if (taskList) {
+      const newTask: Task = emptyTask();
+      taskList.tasks.push(newTask);
+    }
+  }
+
+  protected handleNewTaskSkipped({ taskListId }: NewTaskSkippedOutput) {
+    const taskList = this.getTaskListById(taskListId);
+    if (taskList) {
+      const newTaskSkippedIndex = taskList.tasks.findIndex(this.isNewTask);
+      if (newTaskSkippedIndex !== -1) {
+        taskList.tasks.splice(newTaskSkippedIndex, 1);
+      }
+    }
+  }
+
   /******************
    * HELPER METHODS *
    ******************/
@@ -122,5 +145,9 @@ export class TaskBoardFeat {
       default:
         return null;
     }
+  }
+
+  private isNewTask(task: Task): boolean {
+    return !task.id;
   }
 }

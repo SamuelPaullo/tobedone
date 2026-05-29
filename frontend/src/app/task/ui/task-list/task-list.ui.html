@@ -34,6 +34,8 @@
         (onTitleUpdated)="handleTaskTitleUpdated($event)"
         (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
         (onArchiveTask)="handleTaskArchived($event)"
+        [editModeEnabled]="isNewTask(task)"
+        (onEditSkipped)="handleNewTaskSkipped($event)"
       />
     }
   }
