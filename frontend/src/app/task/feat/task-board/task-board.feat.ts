@@ -1,15 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   TaskListUi,
   TaskListTitleUpdatedOutput,
   TaskUpdateOutput,
-  TaskTitleUpdatedOutput,
+  TaskEditCompletedOutput,
   ToggleTaskCompletionOutput,
   ArchiveTaskOutput,
   NewTaskRequestOutput,
   NewTaskSkippedOutput,
+  NewTaskConfirmedOutput,
 } from '../../ui/task-list';
-import { Task, emptyTask, TaskList } from '../../model';
+import { Task, TaskList } from '../../model';
+import { TaskService } from '../../service/task.service';
+import { TransientTask } from '../../model/transient-task.model';
 
 @Component({
   selector: 'task-board-feat',
@@ -18,7 +21,9 @@ import { Task, emptyTask, TaskList } from '../../model';
   styleUrl: './task-board.feat.scss',
 })
 export class TaskBoardFeat {
-  protected readonly todo: TaskList = {
+  private readonly taskService = inject(TaskService);
+
+  protected readonly todo = signal<TaskList>({
     id: '1',
     title: 'To Do',
     tasks: [
@@ -28,6 +33,7 @@ export class TaskBoardFeat {
         completed: false,
         createdAt: '2026-05-28T09:00:00Z',
         completedAt: '',
+        listId: '1',
       },
       {
         id: '2',
@@ -35,6 +41,7 @@ export class TaskBoardFeat {
         completed: false,
         createdAt: '2026-05-28T10:00:00Z',
         completedAt: '',
+        listId: '1',
       },
       {
         id: '3',
@@ -42,21 +49,22 @@ export class TaskBoardFeat {
         completed: false,
         createdAt: '2026-05-28T11:00:00Z',
         completedAt: '',
+        listId: '1',
       },
     ],
-  };
+  });
 
-  protected readonly inProgress: TaskList = {
+  protected readonly inProgress = signal<TaskList>({
     id: '2',
     title: 'In Progress',
     tasks: [],
-  };
+  });
 
-  protected readonly done: TaskList = {
+  protected readonly done = signal<TaskList>({
     id: '3',
     title: 'Done',
     tasks: [],
-  };
+  });
 
   protected handleTaskListTitleUpdated({ taskListId, newTitle }: TaskListTitleUpdatedOutput) {
     const taskList = this.getTaskListById(taskListId);
@@ -65,48 +73,43 @@ export class TaskBoardFeat {
     }
   }
 
-  protected handleAddTaskButtonClick() {}
-
   /**************************
    * TASK MUTATION HANDLERS *
    **************************/
-  protected handleTaskTitleUpdated({
+  protected async handleTaskTitleUpdated({
     taskListId,
     value: { taskId, newTitle },
-  }: TaskUpdateOutput<TaskTitleUpdatedOutput>) {
+  }: TaskUpdateOutput<TaskEditCompletedOutput>) {
     const taskList = this.getTaskListById(taskListId);
     if (taskList) {
-      const task = taskList.tasks.find((t) => t.id === taskId);
-      if (task) {
-        task.title = newTitle;
-      }
+      const updatedTask = await this.taskService.updateTaskTitle({ taskId, newTitle });
+      const taskIndex = this.getTaskIndexById(taskList, taskId);
+      taskList.tasks.splice(taskIndex, 1, updatedTask);
     }
   }
 
-  protected handleToggleTaskCompletion({
+  protected async handleToggleTaskCompletion({
     taskListId,
     value: { taskId, completed },
   }: TaskUpdateOutput<ToggleTaskCompletionOutput>) {
+    console.log('Toggling task completion for taskId:', taskId, 'to completed:', completed);
     const taskList = this.getTaskListById(taskListId);
     if (taskList) {
-      const task = taskList.tasks.find((t) => t.id === taskId);
-      if (task) {
-        task.completed = completed;
-        task.completedAt = completed ? new Date().toISOString() : '';
-      }
+      const updatedTask = await this.taskService.toggleTaskCompletion({ taskId, completed });
+      const taskIndex = this.getTaskIndexById(taskList, taskId);
+      taskList.tasks.splice(taskIndex, 1, updatedTask);
     }
   }
 
-  protected handleTaskArchived({
+  protected async handleTaskArchived({
     taskListId,
     value: { taskId },
   }: TaskUpdateOutput<ArchiveTaskOutput>) {
     const taskList = this.getTaskListById(taskListId);
     if (taskList) {
-      const taskIndex = taskList.tasks.findIndex((t) => t.id === taskId);
-      if (taskIndex !== -1) {
-        taskList.tasks.splice(taskIndex, 1);
-      }
+      await this.taskService.archiveTask({ taskId });
+      const taskIndex = this.getTaskIndexById(taskList, taskId);
+      taskList.tasks.splice(taskIndex, 1);
     }
   }
 
@@ -116,7 +119,7 @@ export class TaskBoardFeat {
   protected handleNewTaskRequested({ taskListId }: NewTaskRequestOutput) {
     const taskList = this.getTaskListById(taskListId);
     if (taskList) {
-      const newTask: Task = emptyTask();
+      const newTask: Task = TransientTask.create();
       taskList.tasks.push(newTask);
     }
   }
@@ -131,23 +134,44 @@ export class TaskBoardFeat {
     }
   }
 
+  protected async handleNewTaskConfirmed({ taskListId, title }: NewTaskConfirmedOutput) {
+    const taskList = this.getTaskListById(taskListId);
+    if (taskList) {
+      const newTaskIndex = taskList.tasks.findIndex(this.isNewTask);
+      const newTask = await this.taskService.createTask({
+        ...Task.createEmpty(),
+        title,
+        listId: taskListId,
+      });
+      taskList.tasks.splice(newTaskIndex, 1, newTask);
+    }
+  }
+
   /******************
    * HELPER METHODS *
    ******************/
   private getTaskListById(taskListId: string): TaskList | null {
     switch (taskListId) {
-      case this.todo.id:
-        return this.todo;
-      case this.inProgress.id:
-        return this.inProgress;
-      case this.done.id:
-        return this.done;
+      case this.todo().id:
+        return this.todo();
+      case this.inProgress().id:
+        return this.inProgress();
+      case this.done().id:
+        return this.done();
       default:
         return null;
     }
   }
 
+  private getTaskIndexById(taskList: TaskList, taskId: string): number {
+    const taskIndex = taskList.tasks.findIndex((t) => t.id === taskId);
+    if (taskIndex === -1) {
+      throw new Error(`Task with id ${taskId} not found in list ${taskList.id}`);
+    }
+    return taskIndex;
+  }
+
   private isNewTask(task: Task): boolean {
-    return !task.id;
+    return task instanceof TransientTask;
   }
 }

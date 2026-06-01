@@ -1,9 +1,9 @@
 import { Task } from '../../model/task.model';
-import { Component, computed, ElementRef, input, output, signal, ViewChild } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { TaskTitleUpdatedOutput, ToggleTaskCompletionOutput, ArchiveTaskOutput, TaskEditSkippedOutput } from '.';
+import { ToggleTaskCompletionOutput, ArchiveTaskOutput, TaskTitleEditRequestOutput } from '.';
 
 @Component({
   selector: 'task-item-ui',
@@ -14,17 +14,9 @@ import { TaskTitleUpdatedOutput, ToggleTaskCompletionOutput, ArchiveTaskOutput, 
 export class TaskItemUi {
   readonly task = input.required<Task>();
 
-  readonly onTitleUpdated = output<TaskTitleUpdatedOutput>();
   readonly onToggleTaskCompletion = output<ToggleTaskCompletionOutput>();
   readonly onArchiveTask = output<ArchiveTaskOutput>();
-  readonly onEditSkipped = output<TaskEditSkippedOutput>();
-
-  readonly editModeEnabled = input<boolean>(false);
-  private readonly internalEditMode = signal(false);
-  protected readonly isEditing = computed(() => this.editModeEnabled() || this.internalEditMode());
-
-  @ViewChild('titleInput')
-  private titleInputRef!: ElementRef<HTMLInputElement>;
+  readonly onTaskTitleEditRequest = output<TaskTitleEditRequestOutput>();
 
   protected toggleCompleted() {
     this.onToggleTaskCompletion.emit({
@@ -33,56 +25,15 @@ export class TaskItemUi {
     });
   }
 
-  protected startEditing() {
-    this.internalEditMode.set(true);
-  }
-
-  protected cancelEditing() {
-    this.internalEditMode.set(false);
-    this.onEditSkipped.emit({ taskId: this.task().id });
-  }
-
-  protected finishEditing() {
-    const newTitle = this.titleInputRef.nativeElement.value.trim();
-    if (newTitle !== this.task().title) {
-      this.onTitleUpdated.emit({
-        taskId: this.task().id,
-        newTitle,
-      });
-      this.internalEditMode.set(false);
-    } else {
-      this.cancelEditing();
-    }
-  }
-
   protected archive() {
     this.onArchiveTask.emit({ taskId: this.task().id });
   }
 
-  protected ngAfterViewChecked() {
-    if (this.isEditing()) {
-      this.setFocusInTitleInput();
-    }
+  protected handleTitleClick() {
+    this.emitTaskTitleEditRequest();
   }
 
-  private setFocusInTitleInput() {
-    if (this.titleInputRef) {
-      const input = this.titleInputRef.nativeElement;
-      input.focus();
-    }
-  }
-
-  protected handleTitleInputBlur() {
-    if (this.isEditing()) {
-      this.finishEditing();
-    }
-  }
-
-  protected handleTitleInputKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      this.finishEditing();
-    } else if (event.key === 'Escape') {
-      this.cancelEditing();
-    }
+  protected emitTaskTitleEditRequest() {
+    this.onTaskTitleEditRequest.emit({ taskId: this.task().id });
   }
 }

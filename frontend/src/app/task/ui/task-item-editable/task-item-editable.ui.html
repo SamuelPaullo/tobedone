@@ -1,0 +1,14 @@
+<div class="task-item">
+  <mat-checkbox disabled [checked]="task().completed" />
+    <input
+      #titleInput
+      class="task-title-input"
+      [value]="task().title"
+      (blur)="handleTitleInputBlur()"
+      (keydown)="handleTitleInputKeydown($event)"
+      placeholder="Título da tarefa"
+    />
+  <button matIconButton disabled class="task-menu" aria-label="Mais opções">
+    <mat-icon class="task-menu-icon">more_vert</mat-icon>
+  </button>
+</div>

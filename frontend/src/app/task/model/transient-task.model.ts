@@ -1,4 +1,6 @@
-export class Task {
+import { Task } from './task.model';
+
+export class TransientTask implements Task {
   constructor(
     public readonly id: string,
     public readonly title: string,
@@ -8,7 +10,7 @@ export class Task {
     public readonly listId: string,
   ) {}
 
-  static createEmpty(): Task {
-    return new Task('', '', false, '', '', '');
+  static create(): TransientTask {
+    return new TransientTask('', '', false, '', '', '');
   }
 }

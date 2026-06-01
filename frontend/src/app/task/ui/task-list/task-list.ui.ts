@@ -1,36 +1,39 @@
 import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { Task, TaskList } from '../../model';
+import { Task, TaskList, TransientTask } from '../../model';
 import {
   TaskListTitleUpdatedOutput,
   TaskUpdateOutput,
   NewTaskRequestOutput,
   NewTaskSkippedOutput,
+  NewTaskConfirmedOutput,
 } from './ouput';
 import {
   TaskItemUi,
   ArchiveTaskOutput,
-  TaskTitleUpdatedOutput,
   ToggleTaskCompletionOutput,
-  TaskEditSkippedOutput,
+  TaskTitleEditRequestOutput,
 } from '../task-item';
+import { TaskEditCanceledOutput, TaskEditCompletedOutput, TaskItemEditableUi } from '../task-item-editable';
 
 @Component({
   selector: 'task-list-ui',
-  imports: [TaskItemUi, MatIcon, MatButtonModule],
+  imports: [TaskItemUi, TaskItemEditableUi, MatIcon, MatButtonModule],
   templateUrl: './task-list.ui.html',
   styleUrl: './task-list.ui.scss',
 })
 export class TaskListUi {
   readonly taskList = input.required<TaskList>();
+  readonly editingTaskId = signal<string | null>(null);
 
   readonly onTaskListTitleUpdated = output<TaskListTitleUpdatedOutput>();
-  readonly onTaskTitleUpdated = output<TaskUpdateOutput<TaskTitleUpdatedOutput>>();
+  readonly onTaskTitleUpdated = output<TaskUpdateOutput<TaskEditCompletedOutput>>();
   readonly onToggleTaskCompletion = output<TaskUpdateOutput<ToggleTaskCompletionOutput>>();
   readonly onTaskArchived = output<TaskUpdateOutput<ArchiveTaskOutput>>();
   readonly onNewTaskRequested = output<NewTaskRequestOutput>();
   readonly onNewTaskSkipped = output<NewTaskSkippedOutput>();
+  readonly onNewTaskConfirmed = output<NewTaskConfirmedOutput>();
 
   protected isEditingTitle = signal(false);
   protected isMouseOverTitle = signal(false);
@@ -81,17 +84,6 @@ export class TaskListUi {
     }
   }
 
-  /*********************
-   * ADD TASK HANDLERS *
-   *********************/
-  protected handleAddTaskButtonClick() {
-    this.onNewTaskRequested.emit({ taskListId: this.taskList().id });
-  }
-
-  protected handleNewTaskSkipped(output: TaskEditSkippedOutput) {
-    this.onNewTaskSkipped.emit({ taskListId: this.taskList().id });
-  }
-
   /***************************
    * ANGULAR LIFECYCLE HOOKS *
    ***************************/
@@ -101,16 +93,46 @@ export class TaskListUi {
     }
   }
 
-  /******************************************
-   * TASK ITEMS OUTPUT PROPAGATION HANDLERS *
-   ******************************************/
-  protected handleTaskTitleUpdated(output: TaskTitleUpdatedOutput) {
+  /*********************
+   * ADD TASK HANDLERS *
+   *********************/
+  protected handleAddTaskButtonClick() {
+    this.onNewTaskRequested.emit({ taskListId: this.taskList().id });
+  }
+
+  protected handleNewTaskSkipped(output: TaskEditCanceledOutput) {
+    this.onNewTaskSkipped.emit({ taskListId: this.taskList().id });
+  }
+
+  protected handleNewTaskConfirmed(output: TaskEditCompletedOutput) {
+    this.onNewTaskConfirmed.emit({
+      taskListId: this.taskList().id,
+      title: output.newTitle,
+    });
+  }
+
+  /*********************************
+   * TASK ITEM EDIT TITLE HANDLERS *
+   *********************************/
+  protected handleTaskTitleEditRequest(output: TaskTitleEditRequestOutput) {
+    this.editingTaskId.set(output.taskId);
+  }
+
+  protected handleTaskTitleUpdated(output: TaskEditCompletedOutput) {
+    this.editingTaskId.set(null);
     this.onTaskTitleUpdated.emit({
       taskListId: this.taskList().id,
       value: output,
     });
   }
 
+  protected handleTaskTitleEditCanceled() {
+    this.editingTaskId.set(null);
+  }
+
+  /*****************************************
+   * TASK ITEM OUTPUT PROPAGATION HANDLERS *
+   *****************************************/
   protected handleToggleTaskCompletion(output: ToggleTaskCompletionOutput) {
     this.onToggleTaskCompletion.emit({
       taskListId: this.taskList().id,
@@ -129,6 +151,6 @@ export class TaskListUi {
    * HELPER METHODS *
    ******************/
   isNewTask(task: Task): boolean {
-    return !task.id;
+    return task instanceof TransientTask;
   }
 }

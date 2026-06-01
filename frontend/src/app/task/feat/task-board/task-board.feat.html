@@ -1,35 +1,38 @@
 <main class="task-board">
   <section>
     <task-list-ui
-      [taskList]="todo"
+      [taskList]="todo()"
       (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
       (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
       (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
       (onTaskArchived)="handleTaskArchived($event)"
       (onNewTaskRequested)="handleNewTaskRequested($event)"
       (onNewTaskSkipped)="handleNewTaskSkipped($event)"
+      (onNewTaskConfirmed)="handleNewTaskConfirmed($event)"
     />
   </section>
   <section>
     <task-list-ui
-      [taskList]="inProgress"
+      [taskList]="inProgress()"
       (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
       (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
       (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
       (onTaskArchived)="handleTaskArchived($event)"
       (onNewTaskRequested)="handleNewTaskRequested($event)"
       (onNewTaskSkipped)="handleNewTaskSkipped($event)"
+      (onNewTaskConfirmed)="handleNewTaskConfirmed($event)"
     />
   </section>
   <section>
     <task-list-ui
-      [taskList]="done"
+      [taskList]="done()"
       (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
       (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
       (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
       (onTaskArchived)="handleTaskArchived($event)"
       (onNewTaskRequested)="handleNewTaskRequested($event)"
       (onNewTaskSkipped)="handleNewTaskSkipped($event)"
+      (onNewTaskConfirmed)="handleNewTaskConfirmed($event)"
     />
   </section>
 </main>
