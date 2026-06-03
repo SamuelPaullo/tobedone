@@ -1,5 +1,16 @@
 .task-board {
+  --task-list-min-width: 290px;
+  --task-list-max-width: 350px;
+
   display: flex;
+  flex-wrap: nowrap;
+  align-items: start;
   gap: 2rem;
   padding: 2rem;
+}
+
+.task-board > section {
+  width: clamp(var(--task-list-min-width), 30vw, var(--task-list-max-width));
+  flex: 0 0 clamp(var(--task-list-min-width), 30vw, var(--task-list-max-width));
+  box-sizing: border-box;
 }

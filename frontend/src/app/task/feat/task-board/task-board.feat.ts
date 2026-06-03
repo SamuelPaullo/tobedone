@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import {
   TaskListUi,
   TaskListTitleUpdatedOutput,
@@ -10,66 +10,75 @@ import {
   NewTaskSkippedOutput,
   NewTaskConfirmedOutput,
 } from '../../ui/task-list';
-import { Task, TaskList } from '../../model';
-import { TaskService } from '../../service/task.service';
-import { TransientTask } from '../../model/transient-task.model';
+import { Task, TransientTask, TaskList } from '../../model';
+import { TaskService, TaskListService } from '../../service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'task-board-feat',
-  imports: [TaskListUi],
+  imports: [TaskListUi, MatButtonModule, MatInputModule],
   templateUrl: './task-board.feat.html',
   styleUrl: './task-board.feat.scss',
 })
 export class TaskBoardFeat {
+  protected readonly taskLists = signal<TaskList[]>([]);
+
+  private readonly taskListService = inject(TaskListService);
   private readonly taskService = inject(TaskService);
 
-  protected readonly todo = signal<TaskList>({
-    id: '1',
-    title: 'To Do',
-    tasks: [
-      {
-        id: '1',
-        title: 'Task 1',
-        completed: false,
-        createdAt: '2026-05-28T09:00:00Z',
-        completedAt: '',
-        listId: '1',
-      },
-      {
-        id: '2',
-        title: 'Task 2',
-        completed: false,
-        createdAt: '2026-05-28T10:00:00Z',
-        completedAt: '',
-        listId: '1',
-      },
-      {
-        id: '3',
-        title: 'Task 3',
-        completed: false,
-        createdAt: '2026-05-28T11:00:00Z',
-        completedAt: '',
-        listId: '1',
-      },
-    ],
-  });
+  protected readonly isAddingNewList = signal(false);
+  @ViewChild('newListTitleInput')
+  private newListTitleInputRef!: ElementRef<HTMLInputElement>;
 
-  protected readonly inProgress = signal<TaskList>({
-    id: '2',
-    title: 'In Progress',
-    tasks: [],
-  });
+  constructor() {
+    const lists = this.taskListService.getTaskLists();
+    this.taskLists.set(lists);
+  }
 
-  protected readonly done = signal<TaskList>({
-    id: '3',
-    title: 'Done',
-    tasks: [],
-  });
+  /***************************
+   * ANGULAR LIFECYCLE HOOKS *
+   ***************************/
+  ngAfterViewChecked() {
+    if (this.isAddingNewList() && this.newListTitleInputRef) {
+      this.newListTitleInputRef.nativeElement.focus();
+    }
+  }
 
-  protected handleTaskListTitleUpdated({ taskListId, newTitle }: TaskListTitleUpdatedOutput) {
-    const taskList = this.getTaskListById(taskListId);
-    if (taskList) {
-      taskList.title = newTitle;
+  /**************************
+   * LIST MUTATION HANDLERS *
+   **************************/
+  protected async handleTaskListTitleUpdated({ taskListId, newTitle }: TaskListTitleUpdatedOutput) {
+    const taskListIndex = this.getTaskListIndexById(taskListId);
+    if (taskListIndex !== -1) {
+      const updatedTaskList = await this.taskListService.updateTaskListTitle(taskListId, newTitle);
+      this.taskLists.update((lists) => {
+        const updatedLists = [...lists];
+        updatedLists.splice(taskListIndex, 1, updatedTaskList);
+        return updatedLists;
+      });
+    }
+  }
+
+  /**************************
+   * LIST CREATION HANDLERS *
+   **************************/
+  protected handleAddNewListInputBlur() {
+    this.isAddingNewList.set(false);
+  }
+
+  protected async handleAddNewListInputKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      const inputElement = event.target as HTMLInputElement;
+      const title = inputElement.value.trim();
+      if (title) {
+        console.log('Creating new list with title:', title);
+        const newTaskList = await this.taskListService.createTaskList(title);
+        this.taskLists.update((lists) => [...lists, newTaskList]);
+        this.isAddingNewList.set(false);
+      }
+    } else if (event.key === 'Escape') {
+      this.isAddingNewList.set(false);
     }
   }
 
@@ -92,7 +101,6 @@ export class TaskBoardFeat {
     taskListId,
     value: { taskId, completed },
   }: TaskUpdateOutput<ToggleTaskCompletionOutput>) {
-    console.log('Toggling task completion for taskId:', taskId, 'to completed:', completed);
     const taskList = this.getTaskListById(taskListId);
     if (taskList) {
       const updatedTask = await this.taskService.toggleTaskCompletion({ taskId, completed });
@@ -150,17 +158,17 @@ export class TaskBoardFeat {
   /******************
    * HELPER METHODS *
    ******************/
-  private getTaskListById(taskListId: string): TaskList | null {
-    switch (taskListId) {
-      case this.todo().id:
-        return this.todo();
-      case this.inProgress().id:
-        return this.inProgress();
-      case this.done().id:
-        return this.done();
-      default:
-        return null;
+  private getTaskListById(taskListId: string): TaskList | undefined {
+    const taskList = this.taskLists().find((list) => list.id === taskListId);
+    return taskList;
+  }
+
+  private getTaskListIndexById(taskListId: string): number {
+    const taskListIndex = this.taskLists().findIndex((list) => list.id === taskListId);
+    if (taskListIndex === -1) {
+      throw new Error(`TaskList with id ${taskListId} not found`);
     }
+    return taskListIndex;
   }
 
   private getTaskIndexById(taskList: TaskList, taskId: string): number {
