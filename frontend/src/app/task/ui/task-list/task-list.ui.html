@@ -25,15 +25,19 @@
       </button>
     }
   </header>
-  @if (taskList().tasks.length === 0) {
-    <p class="no-tasks-message">Nenhuma tarefa cadastrada ainda.</p>
-  } @else {
+  <div
+    cdkDropList
+    class="task-list-content task-list-draggable-area"
+    [id]="taskList().id"
+    [cdkDropListData]="taskList().tasks"
+    (cdkDropListDropped)="handleTaskDropped($event)"
+  >
     @for (task of taskList().tasks; track task.id) {
       @if (isNewTask(task)) {
         <task-item-editable-ui
-        [task]="task"
-        (onComplete)="handleNewTaskConfirmed($event)"
-        (onCancel)="handleNewTaskSkipped($event)"
+          [task]="task"
+          (onComplete)="handleNewTaskConfirmed($event)"
+          (onCancel)="handleNewTaskSkipped($event)"
         />
       } @else {
         @if (editingTaskId() === task.id) {
@@ -45,6 +49,9 @@
         } @else {
           <task-item-ui
             [task]="task"
+            class="task-item-draggable"
+            cdkDrag
+            [cdkDragData]="task"
             (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
             (onArchiveTask)="handleTaskArchived($event)"
             (onTaskTitleEditRequest)="handleTaskTitleEditRequest($event)"
@@ -52,7 +59,7 @@
         }
       }
     }
-  }
+  </div>
   <footer class="task-list-footer">
     <button
       mat-button

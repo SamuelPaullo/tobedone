@@ -1,4 +1,4 @@
-<main class="task-board">
+<main class="task-board" cdkDropListGroup>
   @for (list of taskLists(); track list.id) {
     <section>
       <task-list-ui
@@ -10,6 +10,7 @@
         (onNewTaskRequested)="handleNewTaskRequested($event)"
         (onNewTaskSkipped)="handleNewTaskSkipped($event)"
         (onNewTaskConfirmed)="handleNewTaskConfirmed($event)"
+        (onTaskDropped)="handleTaskDropped($event)"
       />
     </section>
   }

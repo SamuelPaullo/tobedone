@@ -3,3 +3,4 @@ export * from './task-update.output';
 export * from './new-task-request.output';
 export * from './new-task-skipped.output';
 export * from './new-task-confirmed.output';
+export * from './task-dropped.output';

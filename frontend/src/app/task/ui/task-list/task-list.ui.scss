@@ -8,7 +8,7 @@
   padding: 24px 18px 18px 18px;
   min-width: var(--task-list-min-width, 320px);
   max-width: var(--task-list-max-width, 400px);
-  min-height: 10vh;
+  min-height: 20vh;
   border: 1px solid #e0e3ea;
 }
 
@@ -55,12 +55,11 @@
   }
 }
 
-.no-tasks-message {
-  font-family: 'Roboto', sans-serif;
-  font-size: 1em;
-  color: #666;
-  text-align: center;
-  margin-top: 8px;
+.task-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
 }
 
 .add-task-button {
@@ -70,4 +69,38 @@
   .add-task-button-label {
     font-weight: 500;
   }
+}
+
+/* DRAG & DROP STYLES */
+.task-list-draggable-area {
+  display: flex;
+  flex-direction: column;
+}
+.task-item-draggable {
+  background: inherit;
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+:host ::ng-deep .cdk-drag-placeholder {
+  opacity: 0.1;
+  border-radius: 4px;
+  background: #5f5c5c;
+  & > * {
+    visibility: hidden;
+  }
+}
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.task-item-draggable:last-child {
+  border: none;
+}
+.task-list-draggable-area.cdk-drop-list-dragging .task-item-draggable:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

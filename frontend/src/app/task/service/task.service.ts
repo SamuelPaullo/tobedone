@@ -50,6 +50,52 @@ export class TaskService {
     throw new Error('Not implemented');
   }
 
+  async moveTask({
+    taskId,
+    previousListId,
+    newListId,
+    previousPosition,
+    newPosition,
+  }: {
+    taskId: string;
+    previousListId: string;
+    newListId: string;
+    previousPosition: number;
+    newPosition: number;
+  }): Promise<Task> {
+    const taskIndex = this.tasks.findIndex((task) => task.id === taskId);
+    if (taskIndex === -1) {
+      throw new Error(`Task with id ${taskId} not found`);
+    }
+
+    const currentTask = this.tasks[taskIndex];
+    const sourceListTasks = this.tasks.filter((task) => task.listId === previousListId);
+    const targetListTasks = previousListId === newListId ? sourceListTasks : this.tasks.filter((task) => task.listId === newListId);
+
+    const sourceTask = sourceListTasks[previousPosition] ?? currentTask;
+    const movedTask: Task = {
+      ...sourceTask,
+      listId: newListId,
+    };
+
+    const remainingTasks = this.tasks.filter((task) => task.id !== taskId);
+    const normalizedTargetPosition = Math.max(0, Math.min(newPosition, targetListTasks.length));
+
+    const reorderedTargetTasks = [...targetListTasks];
+    if (previousListId === newListId) {
+      const sourceIndexInTarget = reorderedTargetTasks.findIndex((task) => task.id === taskId);
+      if (sourceIndexInTarget !== -1) {
+        reorderedTargetTasks.splice(sourceIndexInTarget, 1);
+      }
+    }
+    reorderedTargetTasks.splice(normalizedTargetPosition, 0, movedTask);
+
+    const otherTasks = remainingTasks.filter((task) => task.listId !== newListId);
+    this.tasks.splice(0, this.tasks.length, ...otherTasks, ...reorderedTargetTasks);
+
+    return movedTask;
+  }
+
   getTasksByListId(listId: string): Task[] {
     return this.tasks.filter((t) => t.listId === listId);
   }

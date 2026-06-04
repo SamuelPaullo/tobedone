@@ -1,4 +1,7 @@
 import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import {
   TaskListUi,
   TaskListTitleUpdatedOutput,
@@ -9,15 +12,14 @@ import {
   NewTaskRequestOutput,
   NewTaskSkippedOutput,
   NewTaskConfirmedOutput,
+  TaskDroppedOutput,
 } from '../../ui/task-list';
 import { Task, TransientTask, TaskList } from '../../model';
 import { TaskService, TaskListService } from '../../service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'task-board-feat',
-  imports: [TaskListUi, MatButtonModule, MatInputModule],
+  imports: [TaskListUi, MatButtonModule, MatInputModule, CdkDropListGroup],
   templateUrl: './task-board.feat.html',
   styleUrl: './task-board.feat.scss',
 })
@@ -85,6 +87,38 @@ export class TaskBoardFeat {
   /**************************
    * TASK MUTATION HANDLERS *
    **************************/
+  protected async handleTaskDropped({
+    taskId,
+    previousListId,
+    newListId,
+    previousPosition,
+    newPosition,
+  }: TaskDroppedOutput) {
+
+    const sourceList = this.getTaskListById(previousListId);
+    const targetList = this.getTaskListById(newListId);
+
+    if (!sourceList || !targetList) {
+      throw new Error('Source or target list not found');
+    }
+
+    await this.taskService.moveTask({
+      taskId,
+      previousListId,
+      newListId,
+      previousPosition,
+      newPosition,
+    });
+
+    const sourceTaskIndex = this.getTaskIndexById(sourceList, taskId);
+    const [movedTask] = sourceList.tasks.splice(sourceTaskIndex, 1);
+
+    const updatedTask = { ...movedTask, listId: newListId };
+    const targetPosition = Math.max(0, Math.min(newPosition, targetList.tasks.length));
+
+    targetList.tasks.splice(targetPosition, 0, updatedTask);
+  }
+
   protected async handleTaskTitleUpdated({
     taskListId,
     value: { taskId, newTitle },
@@ -127,7 +161,7 @@ export class TaskBoardFeat {
   protected handleNewTaskRequested({ taskListId }: NewTaskRequestOutput) {
     const taskList = this.getTaskListById(taskListId);
     if (taskList) {
-      const newTask: Task = TransientTask.create();
+      const newTask: Task = TransientTask.create(taskListId);
       taskList.tasks.push(newTask);
     }
   }

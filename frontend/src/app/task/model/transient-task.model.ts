@@ -10,7 +10,7 @@ export class TransientTask implements Task {
     public readonly listId: string,
   ) {}
 
-  static create(): TransientTask {
-    return new TransientTask('', '', false, '', '', '');
+  static create(listId = ''): TransientTask {
+    return new TransientTask('', '', false, '', '', listId);
   }
 }

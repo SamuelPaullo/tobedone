@@ -4,7 +4,7 @@
   justify-content: space-between;
   gap: 4px;
   padding: 8px 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: solid 1px #ccc;
 }
 
 .task-title {
@@ -16,6 +16,7 @@
   line-height: 1.5;
   letter-spacing: normal;
   margin: 0 8px;
+  cursor: pointer;
   transition: color 0.2s, font-style 0.2s;
 }
 

@@ -1,6 +1,7 @@
 import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { Task, TaskList, TransientTask } from '../../model';
 import {
   TaskListTitleUpdatedOutput,
@@ -8,6 +9,7 @@ import {
   NewTaskRequestOutput,
   NewTaskSkippedOutput,
   NewTaskConfirmedOutput,
+  TaskDroppedOutput,
 } from './ouput';
 import {
   TaskItemUi,
@@ -15,11 +17,22 @@ import {
   ToggleTaskCompletionOutput,
   TaskTitleEditRequestOutput,
 } from '../task-item';
-import { TaskEditCanceledOutput, TaskEditCompletedOutput, TaskItemEditableUi } from '../task-item-editable';
+import {
+  TaskEditCanceledOutput,
+  TaskEditCompletedOutput,
+  TaskItemEditableUi,
+} from '../task-item-editable';
 
 @Component({
   selector: 'task-list-ui',
-  imports: [TaskItemUi, TaskItemEditableUi, MatIcon, MatButtonModule],
+  imports: [
+    TaskItemUi,
+    TaskItemEditableUi,
+    MatIcon,
+    MatButtonModule,
+    CdkDrag,
+    CdkDropList,
+  ],
   templateUrl: './task-list.ui.html',
   styleUrl: './task-list.ui.scss',
 })
@@ -34,12 +47,22 @@ export class TaskListUi {
   readonly onNewTaskRequested = output<NewTaskRequestOutput>();
   readonly onNewTaskSkipped = output<NewTaskSkippedOutput>();
   readonly onNewTaskConfirmed = output<NewTaskConfirmedOutput>();
+  readonly onTaskDropped = output<TaskDroppedOutput>();
 
   protected isEditingTitle = signal(false);
   protected isMouseOverTitle = signal(false);
 
   @ViewChild('taskListTitleInput')
   private taskListTitleInputRef!: ElementRef<HTMLInputElement>;
+
+  /***************************
+   * ANGULAR LIFECYCLE HOOKS *
+   ***************************/
+  protected ngAfterViewChecked() {
+    if (this.isEditingTitle()) {
+      this.requestFocusInTitleInput();
+    }
+  }
 
   /*******************************
    * TITLE LIST EDITION HANDLERS *
@@ -81,15 +104,6 @@ export class TaskListUi {
     if (this.taskListTitleInputRef) {
       const input = this.taskListTitleInputRef.nativeElement;
       input.focus();
-    }
-  }
-
-  /***************************
-   * ANGULAR LIFECYCLE HOOKS *
-   ***************************/
-  protected ngAfterViewChecked() {
-    if (this.isEditingTitle()) {
-      this.requestFocusInTitleInput();
     }
   }
 
@@ -144,6 +158,21 @@ export class TaskListUi {
     this.onTaskArchived.emit({
       taskListId: this.taskList().id,
       value: output,
+    });
+  }
+
+  /************************
+   * DRAG & DROP HANDLERS *
+   ************************/
+  protected handleTaskDropped(event: CdkDragDrop<Task[]>) {
+    const draggedTask = event.item.data as Task;
+
+    this.onTaskDropped.emit({
+      taskId: draggedTask.id,
+      previousListId: event.previousContainer.id,
+      newListId: event.container.id,
+      previousPosition: event.previousIndex,
+      newPosition: event.currentIndex,
     });
   }
 
