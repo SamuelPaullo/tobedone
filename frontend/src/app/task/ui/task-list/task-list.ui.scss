@@ -55,6 +55,19 @@
   }
 }
 
+.list-drag-handle {
+  background: none;
+  border: none;
+  cursor: move;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  margin-left: auto;
+  .material-icons {
+    font-size: 1.4em;
+  }
+}
+
 .task-list-content {
   display: flex;
   flex-direction: column;
@@ -71,7 +84,7 @@
   }
 }
 
-/* DRAG & DROP STYLES */
+/* DRAG & DROP STYLES - TASKS */
 .task-list-draggable-area {
   display: flex;
   flex-direction: column;

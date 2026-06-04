@@ -1,7 +1,7 @@
 import { Component, ElementRef, input, output, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDropList, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Task, TaskList, TransientTask } from '../../model';
 import {
   TaskListTitleUpdatedOutput,
@@ -32,12 +32,14 @@ import {
     MatButtonModule,
     CdkDrag,
     CdkDropList,
+    CdkDragHandle,
   ],
   templateUrl: './task-list.ui.html',
   styleUrl: './task-list.ui.scss',
 })
 export class TaskListUi {
   readonly taskList = input.required<TaskList>();
+  readonly connectedToIds = input<string[]>([]);
   readonly editingTaskId = signal<string | null>(null);
 
   readonly onTaskListTitleUpdated = output<TaskListTitleUpdatedOutput>();

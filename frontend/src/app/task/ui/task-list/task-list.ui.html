@@ -24,10 +24,14 @@
         <mat-icon>edit</mat-icon>
       </button>
     }
+    <div class="list-drag-handle" cdkDragHandle>
+      <mat-icon>drag_indicator</mat-icon>
+    </div>
   </header>
   <div
     cdkDropList
     class="task-list-content task-list-draggable-area"
+    [cdkDropListConnectedTo]="connectedToIds()"
     [id]="taskList().id"
     [cdkDropListData]="taskList().tasks"
     (cdkDropListDropped)="handleTaskDropped($event)"

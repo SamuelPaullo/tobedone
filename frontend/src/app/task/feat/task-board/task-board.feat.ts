@@ -1,7 +1,12 @@
 import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { CdkDropListGroup } from '@angular/cdk/drag-drop';
+import {
+  CdkDropList,
+  CdkDrag,
+  CdkDragDrop,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import {
   TaskListUi,
   TaskListTitleUpdatedOutput,
@@ -19,7 +24,7 @@ import { TaskService, TaskListService } from '../../service';
 
 @Component({
   selector: 'task-board-feat',
-  imports: [TaskListUi, MatButtonModule, MatInputModule, CdkDropListGroup],
+  imports: [TaskListUi, MatButtonModule, MatInputModule, CdkDropList, CdkDrag],
   templateUrl: './task-board.feat.html',
   styleUrl: './task-board.feat.scss',
 })
@@ -62,6 +67,16 @@ export class TaskBoardFeat {
     }
   }
 
+  protected handleListDropped(event: CdkDragDrop<TaskList[]>) {
+    const previousIndex = event.previousIndex;
+    const currentIndex = event.currentIndex;
+    if (previousIndex !== currentIndex) {
+      const updatedLists = [...this.taskLists()];
+      moveItemInArray(updatedLists, previousIndex, currentIndex);
+      this.taskLists.set(updatedLists);
+    }
+  }
+
   /**************************
    * LIST CREATION HANDLERS *
    **************************/
@@ -74,7 +89,6 @@ export class TaskBoardFeat {
       const inputElement = event.target as HTMLInputElement;
       const title = inputElement.value.trim();
       if (title) {
-        console.log('Creating new list with title:', title);
         const newTaskList = await this.taskListService.createTaskList(title);
         this.taskLists.update((lists) => [...lists, newTaskList]);
         this.isAddingNewList.set(false);
@@ -94,7 +108,6 @@ export class TaskBoardFeat {
     previousPosition,
     newPosition,
   }: TaskDroppedOutput) {
-
     const sourceList = this.getTaskListById(previousListId);
     const targetList = this.getTaskListById(newListId);
 
@@ -211,6 +224,12 @@ export class TaskBoardFeat {
       throw new Error(`Task with id ${taskId} not found in list ${taskList.id}`);
     }
     return taskIndex;
+  }
+
+  protected getListsIds(exceptListId: string): string[] {
+    return this.taskLists()
+      .filter((l) => l.id !== exceptListId)
+      .map((l) => l.id);
   }
 
   private isNewTask(task: Task): boolean {

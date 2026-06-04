@@ -7,10 +7,23 @@
   align-items: start;
   gap: 2rem;
   padding: 2rem;
+  overflow: hidden;
 }
 
 .task-board > section {
   width: clamp(var(--task-list-min-width), 30vw, var(--task-list-max-width));
   flex: 0 0 clamp(var(--task-list-min-width), 30vw, var(--task-list-max-width));
   box-sizing: border-box;
+}
+
+.task-board-draggable-area {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: start;
+  gap: 2rem;
+}
+
+/* DRAG & DROP STYLES - LISTAS */
+:host ::ng-deep .cdk-drag-placeholder {
+  opacity: 0;
 }

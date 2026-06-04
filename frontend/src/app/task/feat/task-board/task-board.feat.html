@@ -1,19 +1,30 @@
-<main class="task-board" cdkDropListGroup>
-  @for (list of taskLists(); track list.id) {
-    <section>
-      <task-list-ui
-        [taskList]="list"
-        (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
-        (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
-        (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
-        (onTaskArchived)="handleTaskArchived($event)"
-        (onNewTaskRequested)="handleNewTaskRequested($event)"
-        (onNewTaskSkipped)="handleNewTaskSkipped($event)"
-        (onNewTaskConfirmed)="handleNewTaskConfirmed($event)"
-        (onTaskDropped)="handleTaskDropped($event)"
-      />
-    </section>
-  }
+<main class="task-board">
+  <div
+    cdkDropList
+    class="task-board-draggable-area"
+    [cdkDropListData]="taskLists()"
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="handleListDropped($event)"
+  >
+    @for (list of taskLists(); track list.id) {
+      <section>
+        <task-list-ui
+          cdkDrag
+          class="task-list-draggable-item"
+          [taskList]="list"
+          [connectedToIds]="getListsIds(list.id)"
+          (onTaskListTitleUpdated)="handleTaskListTitleUpdated($event)"
+          (onTaskTitleUpdated)="handleTaskTitleUpdated($event)"
+          (onToggleTaskCompletion)="handleToggleTaskCompletion($event)"
+          (onTaskArchived)="handleTaskArchived($event)"
+          (onNewTaskRequested)="handleNewTaskRequested($event)"
+          (onNewTaskSkipped)="handleNewTaskSkipped($event)"
+          (onNewTaskConfirmed)="handleNewTaskConfirmed($event)"
+          (onTaskDropped)="handleTaskDropped($event)"
+        />
+      </section>
+    }
+  </div>
   <section>
     @if (isAddingNewList()) {
       <mat-form-field class="add-list-form" appearance="outline" floatLabel="always">
