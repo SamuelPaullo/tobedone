@@ -1,7 +1,7 @@
 <main class="task-board">
   <div
     cdkDropList
-    class="task-board-draggable-area"
+    class="task-board-content task-board-draggable-area"
     [cdkDropListData]="taskLists()"
     cdkDropListOrientation="horizontal"
     (cdkDropListDropped)="handleListDropped($event)"

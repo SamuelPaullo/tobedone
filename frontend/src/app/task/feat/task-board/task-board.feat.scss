@@ -16,14 +16,21 @@
   box-sizing: border-box;
 }
 
-.task-board-draggable-area {
+.task-board-content {
   display: flex;
-  flex-wrap: nowrap;
-  align-items: start;
   gap: 2rem;
 }
 
 /* DRAG & DROP STYLES - LISTAS */
+.task-list-draggable-item {
+  display: flex;
+}
+
 :host ::ng-deep .cdk-drag-placeholder {
-  opacity: 0;
+  opacity: 0.1;
+  border-radius: 16px;
+  background: #5f5c5c;
+  & > * {
+    visibility: hidden;
+  }
 }
